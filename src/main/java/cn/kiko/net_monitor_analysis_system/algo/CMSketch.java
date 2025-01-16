@@ -15,16 +15,25 @@ public class CMSketch<Key extends IFlowKey> {
     private int[][] counters;
     private Function<Key, Integer>[] hashFunctions;
 
-    @SuppressWarnings("unchecked")
     public CMSketch(int d, int memoryInBytes) {
         this.d = d;
         this.memoryInBytes = memoryInBytes;
         this.w = memoryInBytes / 4 / d;
         this.counters = new int[d][w];
-        Random random = new Random();
-        this.hashFunctions = (Function<Key, Integer>[]) Stream.generate(random::nextInt)
-                .limit(d)
-                .map(seed -> (Function<Key, Integer>) (key -> key.hashCode() ^ seed))
+        this.hashFunctions = generateHashFunctions(d, 42);
+    }
+
+    public Function<Key, Integer>[] generateHashFunctions(int n) {
+        return generateHashFunctions(n, 42);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Function<Key, Integer>[] generateHashFunctions(int n, int seed) {
+        int MOD = 0x3f3f3f3f;
+        Random random = new Random(seed);
+        return (Function<Key, Integer>[]) Stream.generate(random::nextInt)
+                .limit(n)
+                .map(sd -> (Function<Key, Integer>) (key -> (((key.hashCode() ^ sd) % MOD) + MOD) % MOD))
                 .toArray(Function[]::new);
     }
 

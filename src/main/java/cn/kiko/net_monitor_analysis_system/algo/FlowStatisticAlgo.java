@@ -63,15 +63,15 @@ public class FlowStatisticAlgo<Key extends IFlowKey> {
             cmCount.insert(evicted.getLeft(), evicted.getRight().getCount());
         } else {
             // 小流按一定阈值插入
-            if (evicted.getLeft().hashCode() % 10000 < 10000 * this.sampleRate) {
+            if ((evicted.getLeft().hashCode() % 10000 + 10000) % 10000 < 10000 * this.sampleRate) {
                 cmSize.insert(evicted.getLeft(), evicted.getRight().getSize());
                 cmCount.insert(evicted.getLeft(), evicted.getRight().getCount());
             }
         }
-        if (cmSize.query(evicted.getLeft()) > heavyHitterThreshold) {
+        if (cmCount.query(evicted.getLeft()) > heavyHitterThreshold) {
             heavyHitterHashTable.add(evicted.getLeft());
         }
-        if (cmSize.query(evicted.getLeft()) > heavyChangeThreshold) {
+        if (cmCount.query(evicted.getLeft()) > heavyChangeThreshold) {
             heavyChangeHashTable.add(evicted.getLeft());
         }
     }

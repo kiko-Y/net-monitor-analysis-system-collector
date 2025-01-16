@@ -28,15 +28,27 @@ public class Switch {
                 k);
     }
 
-    public void receivePacket(Packet packet) {
+    public FlowStatisticAlgo<FlowKey> getFlowStatisticAlgo() {
+        return flowStatisticAlgo;
+    }
+
+    public static FlowKey packetToFlowKey(Packet packet) {
         FlowKey fk = new FlowKey();
         BeanUtils.copyProperties(packet, fk);
-        flowStatisticAlgo.receiveKV(fk, new MonitorValue(0, 1));
+        return fk;
+    }
+
+    public void receivePacket(Packet packet) {
+        flowStatisticAlgo.receiveKV(packetToFlowKey(packet), new MonitorValue(0, 1));
     }
 
     // 导出流统计数据并重置数据结构
-    public void exportAndReset() {
+    public void exportToCollectorAndReset() {
         ExportedMonitorData<FlowKey> monitorData = flowStatisticAlgo.exportAndReset();
         // TODO(kiko): 数据转为 bytes 数组之后传给 collector
+    }
+
+    public ExportedMonitorData<FlowKey> exportDataStructureAndReset() {
+        return flowStatisticAlgo.exportAndReset();
     }
 }

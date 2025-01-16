@@ -1,4 +1,4 @@
-package cn.kiko.net_monitor_analysis_system.sender;
+package cn.kiko.net_monitor_analysis_system.data;
 
 import cn.kiko.net_monitor_analysis_system.device.Packet;
 import org.springframework.core.io.ClassPathResource;
@@ -8,9 +8,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PacketSender {
+public class PacketReader {
     // 共 27121713 条数据
     public List<Packet> readAllPacket() {
+        return readNPacket(Integer.MAX_VALUE);
+    }
+
+    public List<Packet> readNPacket(int n) {
         ClassPathResource resource = new ClassPathResource("./130000.dat");
         if (!resource.exists()) {
             return null;
@@ -32,8 +36,8 @@ public class PacketSender {
                 // skip timestamp
                 ips.skipNBytes(8);
                 packets.add(packet);
+                if (packets.size() >= n) break;
             }
-            System.out.println(ips.read());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

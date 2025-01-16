@@ -1,8 +1,8 @@
-package cn.kiko.net_monitor_analysis_system.sender;
+package cn.kiko.net_monitor_analysis_system.data;
 
 import org.junit.jupiter.api.Test;
 
-public class PacketSenderTest {
+public class PacketReaderTest {
     @Test
     public void testReadAllPackages() {
 //        PacketSender packetSender = new PacketSender();

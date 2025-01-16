@@ -35,7 +35,7 @@ public class P4LRU<Key, Value extends ReducibleValue> {
 
     public Pair<Key, Value> receiveKV(Key key, Value value) {
         Pair<Key, Value> evicted = null;
-        int bucket = key.hashCode() % this.maxBucketNum;
+        int bucket = (key.hashCode() % this.maxBucketNum + this.maxBucketNum) % this.maxBucketNum;
         LinkedList<Pair<Key,Value>> lru = this.lruCache.get(bucket);
         Iterator<Pair<Key, Value>> iter = lru.iterator();
         Value count = null;
