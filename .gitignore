@@ -33,3 +33,5 @@ build/
 .vscode/
 
 130000.dat
+
+.DS_STORE
