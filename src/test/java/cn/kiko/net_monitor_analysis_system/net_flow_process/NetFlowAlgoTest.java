@@ -11,7 +11,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-public class NetFlowProcessTest {
+public class NetFlowAlgoTest {
     @Test
     public void netFlowProcessTest() {
         PacketReader packetReader = new PacketReader();

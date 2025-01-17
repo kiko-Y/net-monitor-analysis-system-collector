@@ -1,3 +1,6 @@
 spring:
   application:
     name: net_monitor_analysis_system
+logging:
+  level:
+    root: info

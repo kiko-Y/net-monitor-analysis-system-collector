@@ -100,13 +100,15 @@ public class FlowStatisticAlgo<Key extends IFlowKey> {
                 heavyChangeHashTable.stream().toList(),
                 heavyHitterHashTable.stream().toList(),
                 cmSize.getD(),
-                cmCount.getD(),
-                Arrays.stream(cmSize.getCounters()).map(arr -> Arrays.stream(arr).boxed().toList()).toList(),
                 cmSize.getW(),
+                Arrays.stream(cmSize.getCounters()).map(arr -> Arrays.stream(arr).boxed().toList()).toList(),
+                cmCount.getD(),
                 cmCount.getW(),
                 Arrays.stream(cmCount.getCounters()).map(arr -> Arrays.stream(arr).boxed().toList()).toList());
     }
 
+    // 导出数据
+    // 到处前会清空 LRU Cache
     public ExportedMonitorData<Key> exportAndReset() {
         ExportedMonitorData<Key> exportedData = export();
         reset();

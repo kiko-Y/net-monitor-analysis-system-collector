@@ -13,7 +13,7 @@ import java.util.concurrent.*;
 public class MonitorDataCollector {
     // 监听端口
     private int port;
-
+    // 大小为 4 的固定大小线程池
     private ThreadPoolExecutor pool = new ThreadPoolExecutor(4, 4, 0L,
             TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ThreadPoolExecutor.CallerRunsPolicy());
 
@@ -35,9 +35,11 @@ public class MonitorDataCollector {
             }
             ExportedMonitorData<FlowKey> monitorData = ExportedMonitorData.parseFromBytes(os.toByteArray(), FlowKey.class);
             // TODO(kiko): 将数据上送至 kafka
+            System.out.println("received data: " + monitorData.hashCode());
         });
     }
 
+    // TODO(kiko): 阻塞 IO 转为 IO 多路复用，长连接
     public void startCollectorServer() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             while (true) {

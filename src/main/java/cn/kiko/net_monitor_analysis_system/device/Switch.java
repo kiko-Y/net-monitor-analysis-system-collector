@@ -6,6 +6,9 @@ import cn.kiko.net_monitor_analysis_system.algo.value.MonitorValue;
 import cn.kiko.net_monitor_analysis_system.model.ExportedMonitorData;
 import org.springframework.beans.BeanUtils;
 
+import java.io.IOException;
+import java.net.Socket;
+
 public class Switch {
     FlowStatisticAlgo<FlowKey> flowStatisticAlgo;
 
@@ -43,9 +46,15 @@ public class Switch {
     }
 
     // 导出流统计数据并重置数据结构
-    public void exportToCollectorAndReset() {
+    public void exportToCollectorAndReset(String ip, int port) {
         ExportedMonitorData<FlowKey> monitorData = flowStatisticAlgo.exportAndReset();
-        // TODO(kiko): 数据转为 bytes 数组之后传给 collector
+        System.out.println("send data: " + monitorData.hashCode());
+        byte[] byteData = monitorData.toBytes(FlowKey.class);
+        try (Socket socket = new Socket(ip, port)) {
+            socket.getOutputStream().write(byteData);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public ExportedMonitorData<FlowKey> exportDataStructureAndReset() {
