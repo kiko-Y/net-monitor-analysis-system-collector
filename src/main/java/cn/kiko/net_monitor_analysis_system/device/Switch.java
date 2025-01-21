@@ -4,6 +4,8 @@ import cn.kiko.net_monitor_analysis_system.algo.FlowKey;
 import cn.kiko.net_monitor_analysis_system.algo.FlowStatisticAlgo;
 import cn.kiko.net_monitor_analysis_system.algo.value.MonitorValue;
 import cn.kiko.net_monitor_analysis_system.model.ExportedMonitorData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 
 import java.io.IOException;
@@ -11,6 +13,8 @@ import java.net.Socket;
 
 public class Switch {
     FlowStatisticAlgo<FlowKey> flowStatisticAlgo;
+
+    private static final Logger logger = LoggerFactory.getLogger(Switch.class);
 
     public Switch(int lruSize, int maxBucketNum, int sketchDepth, int sketchMemoryInBytes) {
         this.flowStatisticAlgo = FlowStatisticAlgo.<FlowKey>builder()
@@ -48,7 +52,7 @@ public class Switch {
     // 导出流统计数据并重置数据结构
     public void exportToCollectorAndReset(String ip, int port) {
         ExportedMonitorData<FlowKey> monitorData = flowStatisticAlgo.exportAndReset();
-        System.out.println("send data: " + monitorData.hashCode());
+        logger.info("send data: " + monitorData.hashCode());
         byte[] byteData = monitorData.toBytes(FlowKey.class);
         try (Socket socket = new Socket(ip, port)) {
             socket.getOutputStream().write(byteData);
