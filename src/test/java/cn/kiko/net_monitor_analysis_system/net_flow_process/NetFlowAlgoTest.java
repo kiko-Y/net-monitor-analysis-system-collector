@@ -16,7 +16,7 @@ public class NetFlowAlgoTest {
     public void netFlowProcessTest() {
         PacketReader packetReader = new PacketReader();
         List<Packet> packets = packetReader.readNPacket(100000);
-        Switch switchX = new Switch(3, 100, 8, 2 * 1024 * 1024);
+        Switch switchX = new Switch("localhost", 9400, 100, 3, 100, 8, 2 * 1024 * 1024);
         HashMap<Packet, Integer> map = new HashMap<>();
         for (Packet packet: packets) {
             switchX.receivePacket(packet);

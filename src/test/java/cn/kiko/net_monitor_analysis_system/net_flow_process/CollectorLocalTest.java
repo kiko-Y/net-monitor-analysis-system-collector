@@ -10,6 +10,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 public class CollectorLocalTest {
+
     @Test
     public void collectorSimpleTest() {
         int port = 9400;
@@ -30,15 +31,17 @@ public class CollectorLocalTest {
 
         PacketReader packetReader = new PacketReader();
         List<Packet> packets = packetReader.readNPacket(100000);
-        Switch switchX = new Switch(3, 100, 8, 2 * 1024 * 1024);
+        Switch switchX = new Switch(ip, port, 1, 3, 100, 8, 2 * 1024 * 1024);
+        new Thread(() -> {
+            for (var packet: packets) {
+                switchX.receivePacket(packet);
+            }
+        }).start();
 
-        for (var packet: packets) {
-            switchX.receivePacket(packet);
-        }
-        switchX.exportToCollectorAndReset(ip, port);
+        new Thread(switchX::start).start();
 
         try {
-            Thread.sleep(1000L);
+            Thread.sleep(4000L);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

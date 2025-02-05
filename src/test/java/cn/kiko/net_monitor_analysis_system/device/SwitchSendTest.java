@@ -12,11 +12,12 @@ public class SwitchSendTest {
         int port = 9400;
         PacketReader packetReader = new PacketReader();
         List<Packet> packets = packetReader.readNPacket(100000);
-        Switch switchX = new Switch(3, 100, 8, 2 * 1024 * 1024);
-
-        for (var packet: packets) {
-            switchX.receivePacket(packet);
-        }
-        switchX.exportToCollectorAndReset(ip, port);
+        Switch switchX = new Switch(ip, port, 2, 3, 100, 8, 2 * 1024 * 1024);
+        new Thread(() -> {
+            for (var packet: packets) {
+                switchX.receivePacket(packet);
+            }
+        }).start();
+        switchX.start();
     }
 }

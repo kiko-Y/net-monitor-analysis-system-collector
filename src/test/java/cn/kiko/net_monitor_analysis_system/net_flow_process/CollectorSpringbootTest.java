@@ -11,10 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @SpringBootTest
@@ -39,17 +37,13 @@ public class CollectorSpringbootTest {
         new Thread(() -> {
             PacketReader packetReader = new PacketReader();
             List<Packet> packets = packetReader.readNPacket(100000);
-            Switch switchX = new Switch(3, 100, 8, 2 * 1024 * 1024);
-
-            for (var packet: packets) {
-                switchX.receivePacket(packet);
-            }
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            switchX.exportToCollectorAndReset("localhost", port);
+            Switch switchX = new Switch("localhost", port, 1, 3, 100, 8, 1 * 256 * 1024);
+            new Thread(() -> {
+                for (var packet : packets) {
+                    switchX.receivePacket(packet);
+                }
+            }).start();
+            new Thread(switchX::start).start();
         }).start();
         new Thread(collector::startCollectorServer).start();
         Thread.sleep(10000);

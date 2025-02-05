@@ -2,6 +2,7 @@ package cn.kiko.net_monitor_analysis_system.collector;
 
 import cn.kiko.net_monitor_analysis_system.algo.FlowKey;
 import cn.kiko.net_monitor_analysis_system.model.ExportedMonitorData;
+import cn.kiko.net_monitor_analysis_system.model.SwitchExportedMonitorData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,8 +63,8 @@ public class MonitorDataCollector {
                 buffer.clear();
             }
             key.interestOps(SelectionKey.OP_READ);
-            ExportedMonitorData<FlowKey> monitorData = ExportedMonitorData.parseFromBytes(os.toByteArray(), FlowKey.class);
-            logger.info("received data: " + monitorData.hashCode());
+            SwitchExportedMonitorData<FlowKey> monitorData = SwitchExportedMonitorData.parseFromBytes(os.toByteArray(), FlowKey.class);
+            logger.info("received data: {}, size: {}", monitorData.hashCode(), os.size());
             // TODO(kiko): kafka 接收消息的默认大小是 1M，需要进行修改
             CompletableFuture<SendResult<String, Object>> future = kafkaTemplate.send(topic, monitorData);
             future.thenRun(() -> {
