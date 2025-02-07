@@ -36,8 +36,8 @@ public class CollectorSpringbootTest {
     public void collectorTest() throws InterruptedException, ExecutionException {
         new Thread(() -> {
             PacketReader packetReader = new PacketReader();
-            List<Packet> packets = packetReader.readNPacket(100000);
-            Switch switchX = new Switch("localhost", port, 1, 3, 100, 8, 1 * 256 * 1024);
+            List<Packet> packets = packetReader.readNPacket(10000);
+            Switch switchX = new Switch("localhost", port, 1, 3, 100, 8, 1024);
             new Thread(() -> {
                 for (var packet : packets) {
                     switchX.receivePacket(packet);
@@ -46,6 +46,6 @@ public class CollectorSpringbootTest {
             new Thread(switchX::start).start();
         }).start();
         new Thread(collector::startCollectorServer).start();
-        Thread.sleep(10000);
+        Thread.sleep(4000);
     }
 }
