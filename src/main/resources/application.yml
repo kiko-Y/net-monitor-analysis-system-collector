@@ -13,6 +13,11 @@ spring:
       compression-type: none
     template:
       default-topic: topic_name # update this
+  data:
+    redis:
+      host: 127.0.0.1
+      database: 0
+      port: 6379
 
 datasource:
   doris:
