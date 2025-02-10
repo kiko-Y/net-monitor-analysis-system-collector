@@ -1,6 +1,7 @@
 package cn.kiko.net_monitor_analysis_system.collector;
 
 import cn.kiko.net_monitor_analysis_system.algo.FlowKey;
+import cn.kiko.net_monitor_analysis_system.model.RealtimeProcessMessage;
 import cn.kiko.net_monitor_analysis_system.model.SwitchExportedMonitorData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -96,11 +97,10 @@ public class MonitorDataCollector {
             logger.info("pre execute sql:\n{}", sql);
             int result = dorisTemplate.update(sql);
             logger.info("execute sql:\n{}\nresult: {}", sql, result);
-            // TODO(kiko): kafka 接收消息的默认大小是 1M，需要进行修改
-            // TODO(kiko): 考虑只向 kafka 发送一个 key，后续再根据 key 去获取对应的数据
-            CompletableFuture<SendResult<String, Object>> future = kafkaTemplate.send(topic, monitorData);
+            RealtimeProcessMessage msg = new RealtimeProcessMessage(monitorData.getSwitchID(), monitorData.getTimeStamp());
+            CompletableFuture<SendResult<String, Object>> future = kafkaTemplate.send(topic, msg);
             future.thenRun(() -> {
-                logger.info("message {} has sent to kafka", monitorData.hashCode());
+                logger.info("message {} has sent to kafka", msg);
             });
         });
     }
