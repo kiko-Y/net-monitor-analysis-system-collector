@@ -13,13 +13,13 @@ spring:
       compression-type: none
     template:
       default-topic: topic_name # update this
+
 datasource:
   doris:
     jdbc-url: jdbc:mysql://localhost:9031/net_analysis
     username: root
     password: ""
     driver-class-name: com.mysql.cj.jdbc.Driver
-
 logging:
   level:
     root: info
