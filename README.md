@@ -2,6 +2,11 @@
 130000.dat
 
 
+## 环境
+application.yml 中的 spring.profile.active 可以配置多环境
+
+具体可以看这个博客：https://cloud.tencent.com/developer/article/2245011
+
 ## Nacos
 
 nacos 的依赖用这个：

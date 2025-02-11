@@ -1,4 +1,4 @@
-package cn.kiko.net_monitor_analysis_system.net_flow_process;
+package cn.kiko.net_monitor_analysis_system.doris;
 
 import cn.kiko.net_monitor_analysis_system.collector.MonitorDataCollector;
 import cn.kiko.net_monitor_analysis_system.data.PacketReader;
@@ -14,9 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.util.List;
 
 @SpringBootTest
-public class CollectorSpringbootTest {
-
-
+public class TestDataGenerator {
     @Value("${collector.port}")
     private int port;
 
@@ -27,8 +25,15 @@ public class CollectorSpringbootTest {
     @Autowired
     private MonitorDataCollector collector;
 
+    void waitUntilNextSec() throws InterruptedException {
+        long currentTimeMillis = System.currentTimeMillis();
+        long waitTime = 1000 - currentTimeMillis % 1000;
+        Thread.sleep(waitTime);
+    }
+
     @Test
-    public void collectorTest() throws InterruptedException {
+    public void testDataGenerate() throws InterruptedException {
+        waitUntilNextSec();
         new Thread(collector::startCollectorServer).start();
         new Thread(() -> {
             PacketReader packetReader = new PacketReader();
@@ -38,9 +43,9 @@ public class CollectorSpringbootTest {
                 for (int i = 0; i < packets.size(); i++) {
                     Packet packet = packets.get(i);
                     switchX.receivePacket(packet);
-                    if (i != 0 && i % 3000 == 0) {
+                    if (i != 0 && i % 25000 == 0) {
                         try {
-                            Thread.sleep(100);
+                            waitUntilNextSec();
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
@@ -49,6 +54,6 @@ public class CollectorSpringbootTest {
             }).start();
             new Thread(switchX::start).start();
         }).start();
-        Thread.sleep(4000);
+        Thread.sleep(4500);
     }
 }
