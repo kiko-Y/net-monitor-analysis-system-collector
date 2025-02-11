@@ -37,6 +37,7 @@ public class RedisTest {
         }
         latch.await();
         logger.info("get key, result: {}", redisTemplate.opsForValue().get(testKey));
+        logger.info("increment key, result: {}", redisTemplate.opsForValue().increment(testKey));
         logger.info("deleted: {}", redisTemplate.delete(testKey));
         logger.info("deleted: {}", redisTemplate.delete(testKey));
     }

@@ -3,6 +3,7 @@ package cn.kiko.net_monitor_analysis_system.collector;
 import cn.kiko.net_monitor_analysis_system.algo.FlowKey;
 import cn.kiko.net_monitor_analysis_system.model.RealtimeProcessMessage;
 import cn.kiko.net_monitor_analysis_system.model.SwitchExportedMonitorData;
+import com.alibaba.nacos.api.config.annotation.NacosValue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
@@ -37,10 +39,14 @@ public class MonitorDataCollector {
     // 大小为 4 的固定大小线程池
     private ThreadPoolExecutor pool;
     @Autowired
-    private KafkaTemplate<String,Object> kafkaTemplate;
+    private KafkaTemplate<String,Long> kafkaTemplate;
     @Autowired
     @Qualifier("dorisTemplate")
     private JdbcTemplate dorisTemplate;
+    @NacosValue("${switch.count}")
+    private Long switchCount;
+    @Autowired
+    private RedisTemplate<String,String> redisTemplate;
 
 //    @Value("${collector.kafka.topic}")
     @Value("${kafka-test.topic}")
@@ -97,12 +103,25 @@ public class MonitorDataCollector {
             logger.info("pre execute sql:\n{}", sql);
             int result = dorisTemplate.update(sql);
             logger.info("execute sql:\n{}\nresult: {}", sql, result);
-            RealtimeProcessMessage msg = new RealtimeProcessMessage(monitorData.getSwitchID(), monitorData.getTimeStamp());
-            CompletableFuture<SendResult<String, Object>> future = kafkaTemplate.send(topic, msg);
-            future.thenRun(() -> {
-                logger.info("message {} has sent to kafka", msg);
-            });
+            String redisKey = generateRedisKeyForRealtimeCounter(monitorData.getTimeStamp());
+            Long receivedCountForCurrentTimestamp = redisTemplate.opsForValue().increment(redisKey);
+            if (receivedCountForCurrentTimestamp == null) {
+                logger.error("get null value for redis key: {}", redisKey);
+                return;
+            }
+            // 当前时间戳的测量数据全部收集完成，发送消息进行数据处理
+            if (receivedCountForCurrentTimestamp.equals(switchCount)) {
+                CompletableFuture<SendResult<String, Long>> future = kafkaTemplate.send(topic, monitorData.getTimeStamp());
+                future.thenRun(() -> {
+                    logger.info("timestamp {} has sent to kafka", monitorData.getTimeStamp());
+                });
+                redisTemplate.delete(redisKey);
+            }
         });
+    }
+
+    private String generateRedisKeyForRealtimeCounter(Long timeStamp) {
+        return String.format("realtime:counter:%d", timeStamp);
     }
 
     public void startCollectorServer() {

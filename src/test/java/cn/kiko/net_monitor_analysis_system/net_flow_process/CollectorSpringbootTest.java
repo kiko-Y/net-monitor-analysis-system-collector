@@ -33,19 +33,27 @@ public class CollectorSpringbootTest {
     private KafkaTemplate<String,Object> kafkaTemplate;
 
     @Test
-    public void collectorTest() throws InterruptedException, ExecutionException {
+    public void collectorTest() throws InterruptedException {
+        new Thread(collector::startCollectorServer).start();
         new Thread(() -> {
             PacketReader packetReader = new PacketReader();
-            List<Packet> packets = packetReader.readNPacket(10000);
+            List<Packet> packets = packetReader.readNPacket(100000);
             Switch switchX = new Switch("localhost", port, 1, 3, 100, 8, 1024);
             new Thread(() -> {
-                for (var packet : packets) {
+                for (int i = 0; i < packets.size(); i++) {
+                    Packet packet = packets.get(i);
                     switchX.receivePacket(packet);
+                    if (i != 0 && i % 3000 == 0) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
                 }
             }).start();
             new Thread(switchX::start).start();
         }).start();
-        new Thread(collector::startCollectorServer).start();
         Thread.sleep(4000);
     }
 }
