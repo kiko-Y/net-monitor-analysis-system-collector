@@ -1,4 +1,4 @@
-package cn.kiko.net_monitor_analysis_system.data;
+package cn.kiko.net_monitor_analysis_system.doris;
 
 import cn.kiko.net_monitor_analysis_system.runner.ServerStarter;
 import org.junit.jupiter.api.Test;
@@ -27,6 +27,7 @@ public class DorisTest {
         List<Map<String, Object>> maps = dorisTemplate.queryForList(sql);
         // 是 String，需要转回去，mysql 不支持 array
         Object array2d = maps.get(0).get("c_array_2d");
+        System.out.println(array2d);
         System.out.println(array2d.getClass().getName());
     }
 }

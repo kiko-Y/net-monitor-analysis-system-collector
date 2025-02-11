@@ -1,6 +1,8 @@
 spring:
   application:
     name: net_monitor_analysis_system
+  profiles:
+    active: test
   kafka:
     bootstrap-servers: localhost:19092
     consumer:
