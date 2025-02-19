@@ -1,6 +1,6 @@
 FROM openjdk:17-jdk-slim
 
-COPY *.jar /app.jar
+COPY **/*.jar /app.jar
 
 EXPOSE 9400
 
