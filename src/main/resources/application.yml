@@ -27,6 +27,8 @@ datasource:
     username: root
     password: ""
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+
 logging:
   level:
     root: info
@@ -38,3 +40,13 @@ collector:
 
 kafka-test:
   topic: test-topic
+
+nacos:
+  discovery:
+    server-addr: 162.105.146.22:8848
+    namespace: public
+    group-name: DEFAULT_GROUP
+    service-name: net_monitor_analysis_system_collector
+    ip: 10.7.234.150
+    port: 9400
+
