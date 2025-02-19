@@ -66,7 +66,6 @@ public class MonitorDataCollector {
             while (true) {
                 int sz;
                 try {
-                    // TODO(kiko): 目前是读完，直到对端关闭，后续考虑实现成为长连接，需要进行额外处理
                     if ((sz = clientSocketChannel.read(buffer)) == -1) break;
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -76,7 +75,7 @@ public class MonitorDataCollector {
             }
             key.interestOps(SelectionKey.OP_READ);
             SwitchExportedMonitorData<FlowKey> monitorData = SwitchExportedMonitorData.parseFromBytes(os.toByteArray(), FlowKey.class);
-            logger.info("received data: {}, size: {}", monitorData.hashCode(), os.size());
+            logger.info("received data : {}, size: {}, at timestamp: {}", monitorData.hashCode(), os.size(), System.currentTimeMillis());
             // 数据上送 doris
             ObjectMapper objectMapper = new ObjectMapper();
             String sql;
@@ -99,9 +98,9 @@ public class MonitorDataCollector {
                 logger.error("error when serialize json");
                 throw new RuntimeException(e);
             }
-            logger.info("pre execute sql:\n{}", sql);
+//            logger.info("pre execute sql:\n{}", sql);
             int result = dorisTemplate.update(sql);
-            logger.info("execute sql:\n{}\nresult: {}", sql, result);
+//            logger.info("execute sql:\n{}\nresult: {}", sql, result);
             String redisKey = generateRedisKeyForRealtimeCounter(monitorData.getTimeStamp());
             Long receivedCountForCurrentTimestamp = redisTemplate.opsForValue().increment(redisKey);
             if (receivedCountForCurrentTimestamp == null) {
