@@ -15,7 +15,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1.0"
+          cpus: "2.0"
           memory: 1G
   net_monitor_analysis_system-collector-2:
     image: net_monitor_analysis_system_collector:0.1
@@ -33,7 +33,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1.0"
+          cpus: "2.0"
           memory: 1G
   net_monitor_analysis_system-collector-3:
     image: net_monitor_analysis_system_collector:0.1
@@ -51,7 +51,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1.0"
+          cpus: "2.0"
           memory: 1G
 networks:
   v-network:
