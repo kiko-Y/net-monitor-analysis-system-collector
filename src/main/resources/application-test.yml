@@ -1,6 +1,6 @@
 datasource:
   doris:
-    jdbc-url: jdbc:mysql://localhost:9031/net_analysis_test
+    jdbc-url: jdbc:mysql://162.105.146.22:9031/net_analysis_test
     username: root
     password: ""
     driver-class-name: com.mysql.cj.jdbc.Driver

@@ -1,6 +1,8 @@
 package cn.kiko.net_monitor_analysis_system.device;
 
-import cn.kiko.net_monitor_analysis_system.data.PacketReader;
+import cn.kiko.switch_sdk.data.PacketReader;
+import cn.kiko.switch_sdk.device.Packet;
+import cn.kiko.switch_sdk.device.Switch;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

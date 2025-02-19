@@ -4,7 +4,7 @@ spring:
   profiles:
     active: test
   kafka:
-    bootstrap-servers: localhost:19092
+    bootstrap-servers: 162.105.146.22:19092
     consumer:
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -17,13 +17,13 @@ spring:
       default-topic: topic_name # update this
   data:
     redis:
-      host: 127.0.0.1
+      host: 162.105.146.22
       database: 0
       port: 6379
 
 datasource:
   doris:
-    jdbc-url: jdbc:mysql://localhost:9031/net_analysis
+    jdbc-url: jdbc:mysql://162.105.146.22:9031/net_analysis
     username: root
     password: ""
     driver-class-name: com.mysql.cj.jdbc.Driver

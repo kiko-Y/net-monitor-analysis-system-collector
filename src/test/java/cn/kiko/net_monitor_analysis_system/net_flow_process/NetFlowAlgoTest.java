@@ -1,17 +1,16 @@
 package cn.kiko.net_monitor_analysis_system.net_flow_process;
 
-import cn.kiko.net_monitor_analysis_system.algo.FlowKey;
-import cn.kiko.net_monitor_analysis_system.algo.FlowStatisticAlgo;
-import cn.kiko.net_monitor_analysis_system.data.PacketReader;
-import cn.kiko.net_monitor_analysis_system.device.Packet;
-import cn.kiko.net_monitor_analysis_system.device.Switch;
+import cn.kiko.switch_sdk.algo.FlowKey;
+import cn.kiko.switch_sdk.algo.FlowStatisticAlgo;
+import cn.kiko.switch_sdk.data.PacketReader;
+import cn.kiko.switch_sdk.device.Packet;
+import cn.kiko.switch_sdk.device.Switch;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class NetFlowAlgoTest {
     @Test

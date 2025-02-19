@@ -59,3 +59,17 @@ PROPERTIES
 (
     "replication_num" = "1"
 );
+
+
+CREATE TABLE IF NOT EXISTS array_2d_test
+(
+    `id` CHAR(32) NOT NULL COMMENT "id",
+    `c_array_2d` ARRAY<ARRAY<int>> COMMENT "二维数组"
+)
+    ENGINE=OLAP
+    UNIQUE KEY(`id`)
+ DISTRIBUTED BY HASH(`id`) BUCKETS 16
+ PROPERTIES
+(
+    "replication_num" = "1"
+);
