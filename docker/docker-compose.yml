@@ -1,0 +1,58 @@
+services:
+  net_monitor_analysis_system-collector-1:
+    image: net_monitor_analysis_system_collector:0.1
+    container_name: net_monitor_analysis_system_collector-1
+    restart: none
+    ports:
+      - 9401:9400
+    networks:
+      v-network:
+        ipv4_address: 192.168.2.1
+    environment:
+      - SERVER_IP=162.105.146.22
+      - SERVICE_IP=10.7.234.150
+      - SERVICE_PORT=9401
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+  net_monitor_analysis_system-collector-2:
+    image: net_monitor_analysis_system_collector:0.1
+    container_name: net_monitor_analysis_system_collector-2
+    restart: none
+    ports:
+      - 9402:9400
+    networks:
+      v-network:
+        ipv4_address: 192.168.2.2
+    environment:
+      - SERVER_IP=162.105.146.22
+      - SERVICE_IP=10.7.234.150
+      - SERVICE_PORT=9402
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+  net_monitor_analysis_system-collector-3:
+    image: net_monitor_analysis_system_collector:0.1
+    container_name: net_monitor_analysis_system_collector-3
+    restart: none
+    ports:
+      - 9403:9400
+    networks:
+      v-network:
+        ipv4_address: 192.168.2.3
+    environment:
+      - SERVER_IP=162.105.146.22
+      - SERVICE_IP=10.7.234.150
+      - SERVICE_PORT=9403
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+networks:
+  v-network:
+    external: true
