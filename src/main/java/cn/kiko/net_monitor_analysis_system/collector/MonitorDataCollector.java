@@ -42,7 +42,7 @@ public class MonitorDataCollector {
     @Autowired
     @Qualifier("dorisTemplate")
     private JdbcTemplate dorisTemplate;
-    @NacosValue("${switch.count}")
+    @NacosValue(value = "${switch.count}", autoRefreshed = true)
     private Long switchCount;
     @Autowired
     private RedisTemplate<String,String> redisTemplate;
