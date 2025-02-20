@@ -116,13 +116,14 @@ public class MonitorDataCollector {
         // sql example: INSERT INTO measurement_info (`type`, `timestamp`, `switch_id`, `date`, `heavy_change_keys`, `heavy_hitter_keys`, `depth_for_size_cm`, `width_for_size_cm`, `size_cm`, `depth_for_count_cm`, `width_for_count_cm`, `count_cm`) VALUES (0, 1738921137, "cfcd208495d535efa6e7dff9f98764da", "2025-02-07", [], [], 8, 32, [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]], 8, 32, [[39,9,93,30,5,22,13,45,29,27,14,25,23,29,24,53,20,64,17,206,7,25,24,48,40,14,17,13,75,29,28,22],[17,9,91,34,36,20,10,42,17,27,20,52,18,32,23,212,13,64,8,68,17,25,29,16,44,13,13,22,73,26,27,11],[13,25,24,67,23,64,16,204,64,29,26,20,48,14,16,32,17,21,11,33,40,9,93,20,14,30,26,50,17,26,12,25],[13,26,23,43,12,31,24,10,48,14,18,28,31,25,265,7,30,14,23,28,60,14,26,8,40,18,24,93,11,23,32,67],[25,232,16,84,9,43,26,9,43,20,30,31,64,14,94,16,29,24,13,9,24,40,8,30,23,39,23,27,10,33,19,22],[21,26,12,66,29,29,12,44,21,15,46,3,268,24,53,20,19,14,37,10,26,19,39,21,28,19,34,15,23,23,10,103],[60,20,204,19,9,12,75,27,38,69,46,19,9,36,20,24,21,10,25,6,111,14,28,30,40,24,12,13,35,16,37,20],[49,13,18,13,75,29,23,41,32,63,18,207,6,23,28,64,21,26,10,29,24,30,22,36,31,8,94,28,7,21,12,28]])
         try {
             sql = String.format("INSERT INTO measurement_info " +
-                            "(`type`, `timestamp`, `switch_id`, `date`, `heavy_change_keys`, `heavy_hitter_keys`, " +
+                            "(`type`, `timestamp`, `switch_id`, `date`, `heavy_change_keys`, `heavy_hitter_keys`, `top_k_keys`," +
                             "`depth_for_size_cm`, `width_for_size_cm`, `size_cm`, " +
                             "`depth_for_count_cm`, `width_for_count_cm`, `count_cm`) " +
                             "VALUES (0, %d, \"%s\", \"%s\", %s, %s, %d, %d, %s, %d, %d, %s)",
                     monitorData.getTimeStamp(), monitorData.getSwitchID(), new SimpleDateFormat("yyyy-MM-dd").format(new Date(monitorData.getTimeStamp() * 1000)),
                     objectMapper.writeValueAsString(monitorData.getExportedMonitorData().getHeavyChangeKeys()),
                     objectMapper.writeValueAsString(monitorData.getExportedMonitorData().getHeavyHitterKeys()),
+                    objectMapper.writeValueAsString(monitorData.getExportedMonitorData().getTopKKeys()),
                     monitorData.getExportedMonitorData().getDepthForSizeCM(), monitorData.getExportedMonitorData().getWidthForSizeCM(),
                     objectMapper.writeValueAsString(monitorData.getExportedMonitorData().getSizeCM()),
                     monitorData.getExportedMonitorData().getDepthForCountCM(), monitorData.getExportedMonitorData().getWidthForCountCM(),
