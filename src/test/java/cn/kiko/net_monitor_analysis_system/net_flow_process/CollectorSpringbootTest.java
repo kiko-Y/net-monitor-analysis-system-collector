@@ -33,7 +33,7 @@ public class CollectorSpringbootTest {
         new Thread(() -> {
             PacketReader packetReader = new PacketReader();
             List<Packet> packets = packetReader.readNPacket(100000);
-            Switch switchX = new Switch("localhost", port, 1, 3, 100, 8, 1024);
+            Switch switchX = new Switch("localhost", port, 1, 3, 100, 8, 1024 * 1024);
             new Thread(() -> {
                 for (int i = 0; i < packets.size(); i++) {
                     Packet packet = packets.get(i);

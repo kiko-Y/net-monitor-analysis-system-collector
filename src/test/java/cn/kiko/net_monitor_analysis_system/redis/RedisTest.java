@@ -1,6 +1,8 @@
 package cn.kiko.net_monitor_analysis_system.redis;
 
 import cn.kiko.net_monitor_analysis_system.runner.ServerStarter;
+import cn.kiko.switch_sdk.algo.FlowKey;
+import cn.kiko.switch_sdk.model.SwitchExportedMonitorData;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +11,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 @SpringBootTest
@@ -21,6 +26,8 @@ public class RedisTest {
 
     @Autowired
     private RedisTemplate<String,String> redisTemplate;
+    @Autowired
+    private RedisTemplate<String,byte[]> bytesRedisTemplate;
 
     private final String testKey = "test:key1";
     @Test
@@ -40,5 +47,34 @@ public class RedisTest {
         logger.info("increment key, result: {}", redisTemplate.opsForValue().increment(testKey));
         logger.info("deleted: {}", redisTemplate.delete(testKey));
         logger.info("deleted: {}", redisTemplate.delete(testKey));
+    }
+
+    @Test
+    public void redisBytesTemplateTest() {
+        bytesRedisTemplate.opsForValue().set("1", new byte[]{1, 2, 3});
+        byte[] bytes = bytesRedisTemplate.opsForValue().get("1");
+        System.out.println(Arrays.toString(bytes));
+        bytesRedisTemplate.delete("1");
+    }
+
+    @Test
+    public void redisHashTest() {
+        String key = "tempKey";
+        redisTemplate.opsForHash().put(key, "1", "a");
+        redisTemplate.opsForHash().put(key, "2", "b");
+        System.out.println(redisTemplate.opsForHash().entries(key));
+        redisTemplate.delete(key);
+    }
+
+    @Test
+    public void redisDataTest() {
+//        bytesRedisTemplate.delete("realtime:data:cache:1740027735");
+        Set<String> keys = bytesRedisTemplate.keys("realtime:data:cache:*");
+        System.out.println(keys);
+        Map<Object, Object> entries = bytesRedisTemplate.opsForHash().entries("realtime:data:cache:1740028565");
+        System.out.println(entries.keySet());
+//        byte[] bytes = (byte[]) entries.values().stream().findFirst().orElseThrow();
+//        SwitchExportedMonitorData<FlowKey> data = SwitchExportedMonitorData.<FlowKey>parseFromBytes(bytes, FlowKey.class);
+//        System.out.println(data.getSwitchID() + " " + data.getTimeStamp());
     }
 }
