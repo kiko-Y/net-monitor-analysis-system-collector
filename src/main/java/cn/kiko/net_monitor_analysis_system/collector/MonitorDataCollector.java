@@ -33,6 +33,10 @@ public class MonitorDataCollector {
     // 监听端口
     @Value("${collector.port}")
     private int port;
+    @Value("${nacos.discovery.ip}")
+    private String hostIP;
+    @Value("${nacos.discovery.port}")
+    private Integer hostPort;
     private static final Logger logger = LoggerFactory.getLogger(MonitorDataCollector.class);
     private Selector selector;
     // 大小为 4 的固定大小线程池
@@ -44,6 +48,8 @@ public class MonitorDataCollector {
     private JdbcTemplate dorisTemplate;
     @NacosValue(value = "${switch.count}", autoRefreshed = true)
     private Long switchCount;
+    @NacosValue(value = "${switch.time_interval_sec}", autoRefreshed = true)
+    private Long switchTimeIntervalSec;
     @Autowired
     private RedisTemplate<String,String> redisTemplate;
     @Autowired
@@ -87,6 +93,7 @@ public class MonitorDataCollector {
     private void checkAndSendToKafka(SwitchExportedMonitorData<FlowKey> monitorData) {
         String redisKey = generateRedisKeyForRealtimeCounter(monitorData.getTimeStamp());
         Long receivedCountForCurrentTimestamp = redisTemplate.opsForValue().increment(redisKey);
+        redisTemplate.expire(redisKey, 3 * switchTimeIntervalSec, TimeUnit.SECONDS);
         if (receivedCountForCurrentTimestamp == null) {
             logger.error("get null value for redis key: {}", redisKey);
             return;
@@ -106,7 +113,8 @@ public class MonitorDataCollector {
         String redisKey = generateRedisKeyForRealtimeDataCacheHash(monitorData.getTimeStamp());
         logger.info("generate key: {}", redisKey);
         bytesRedisTemplate.opsForHash().put(redisKey, monitorData.getSwitchID(), monitorData.toBytes(FlowKey.class));
-        logger.info("data cached to redis, key: {}, hashKey: {}", redisKey, monitorData.getSwitchID());
+        bytesRedisTemplate.expire(redisKey, 3 * switchTimeIntervalSec, TimeUnit.SECONDS);
+        logger.info("data cached to redis, key: {}, hashKey: {}, expire time: {}s", redisKey, monitorData.getSwitchID(), 3*switchTimeIntervalSec);
     }
 
     private void dataInsertToDoris(SwitchExportedMonitorData<FlowKey> monitorData) {
@@ -119,7 +127,7 @@ public class MonitorDataCollector {
                             "(`type`, `timestamp`, `switch_id`, `date`, `heavy_change_keys`, `heavy_hitter_keys`, `top_k_keys`," +
                             "`depth_for_size_cm`, `width_for_size_cm`, `size_cm`, " +
                             "`depth_for_count_cm`, `width_for_count_cm`, `count_cm`) " +
-                            "VALUES (0, %d, \"%s\", \"%s\", %s, %s, %d, %d, %s, %d, %d, %s)",
+                            "VALUES (0, %d, \"%s\", \"%s\", %s, %s, %s, %d, %d, %s, %d, %d, %s)",
                     monitorData.getTimeStamp(), monitorData.getSwitchID(), new SimpleDateFormat("yyyy-MM-dd").format(new Date(monitorData.getTimeStamp() * 1000)),
                     objectMapper.writeValueAsString(monitorData.getExportedMonitorData().getHeavyChangeKeys()),
                     objectMapper.writeValueAsString(monitorData.getExportedMonitorData().getHeavyHitterKeys()),
@@ -143,7 +151,7 @@ public class MonitorDataCollector {
     }
 
     private String generateRedisKeyForRealtimeCounter(Long timestamp) {
-        return String.format("realtime:counter:%d", timestamp);
+        return String.format("realtime:data:counter:%d", timestamp);
     }
 
     public void startCollectorServer() {
@@ -158,7 +166,8 @@ public class MonitorDataCollector {
             serverSocketChannel.configureBlocking(false);
             // 注册 interested event
             serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
-            logger.info("collector server start at port {}", port);
+            logger.info("collector server start at container port {}", port);
+            logger.info("collector server start at host {}:{}", hostIP, hostPort);
             while (true) {
                 int readyCount = selector.select();
                 Set<SelectionKey> selectedKeys = selector.selectedKeys();
