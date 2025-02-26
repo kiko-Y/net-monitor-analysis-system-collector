@@ -1,6 +1,6 @@
-package cn.kiko.net_monitor_analysis_system.net_flow_process;
+package cn.kiko.netmonitoranalysissystemcollector.net_flow_process;
 
-import cn.kiko.net_monitor_analysis_system.collector.MonitorDataCollector;
+import cn.kiko.netmonitoranalysissystemcollector.collector.MonitorDataCollector;
 import cn.kiko.switch_sdk.data.PacketReader;
 import cn.kiko.switch_sdk.device.Packet;
 import cn.kiko.switch_sdk.device.Switch;

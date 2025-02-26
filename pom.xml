@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>cn.kiko</groupId>
-    <artifactId>net_monitor_analysis_system</artifactId>
+    <artifactId>net-monitor-analysis-system-collector</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>net_monitor_analysis_system</name>
-    <description>net_monitor_analysis_system</description>
+    <name>net-monitor-analysis-system-collector</name>
+    <description>net-monitor-analysis-system-collector</description>
     <url/>
     <licenses>
         <license/>

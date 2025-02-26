@@ -1,19 +1,16 @@
-package cn.kiko.net_monitor_analysis_system.runner;
+package cn.kiko.netmonitoranalysissystemcollector.runner;
 
-import cn.kiko.net_monitor_analysis_system.collector.MonitorDataCollector;
-import cn.kiko.net_monitor_analysis_system.config.NacosServerDiscoveryConfig;
+import cn.kiko.netmonitoranalysissystemcollector.collector.MonitorDataCollector;
+import cn.kiko.netmonitoranalysissystemcollector.config.NacosServerDiscoveryConfig;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
-import com.alibaba.nacos.api.naming.pojo.Instance;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component

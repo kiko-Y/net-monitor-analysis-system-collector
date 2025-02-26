@@ -1,4 +1,4 @@
-package cn.kiko.net_monitor_analysis_system.config;
+package cn.kiko.netmonitoranalysissystemcollector.config;
 
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import lombok.Data;

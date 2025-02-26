@@ -1,6 +1,6 @@
-package cn.kiko.net_monitor_analysis_system.nacos;
+package cn.kiko.netmonitoranalysissystemcollector.nacos;
 
-import cn.kiko.net_monitor_analysis_system.runner.ServerStarter;
+import cn.kiko.netmonitoranalysissystemcollector.runner.ServerStarter;
 import com.alibaba.nacos.api.config.annotation.NacosValue;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,4 +1,4 @@
-package cn.kiko.net_monitor_analysis_system.kafka_test;
+package cn.kiko.netmonitoranalysissystemcollector.kafka_test;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;

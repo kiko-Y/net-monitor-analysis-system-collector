@@ -1,4 +1,4 @@
-package cn.kiko.net_monitor_analysis_system.config;
+package cn.kiko.netmonitoranalysissystemcollector.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

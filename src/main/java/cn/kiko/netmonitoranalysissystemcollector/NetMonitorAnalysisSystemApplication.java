@@ -1,17 +1,12 @@
-package cn.kiko.net_monitor_analysis_system;
+package cn.kiko.netmonitoranalysissystemcollector;
 
-import cn.kiko.net_monitor_analysis_system.kafka_test.KafkaConsumerService;
-import cn.kiko.net_monitor_analysis_system.kafka_test.KafkaProducerService;
-import com.alibaba.nacos.api.annotation.NacosProperties;
-import com.alibaba.nacos.spring.context.annotation.config.EnableNacosConfig;
-import com.alibaba.nacos.spring.context.annotation.config.NacosPropertySource;
+import cn.kiko.netmonitoranalysissystemcollector.kafka_test.KafkaConsumerService;
+import cn.kiko.netmonitoranalysissystemcollector.kafka_test.KafkaProducerService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.stereotype.Component;
 
 @SpringBootApplication
 @EnableScheduling

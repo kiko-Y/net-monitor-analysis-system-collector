@@ -1,4 +1,4 @@
-package cn.kiko.net_monitor_analysis_system;
+package cn.kiko.netmonitoranalysissystemcollector;
 
 import cn.kiko.switch_sdk.device.Packet;
 import cn.kiko.switch_sdk.data.PacketReader;

@@ -1,4 +1,4 @@
-package cn.kiko.net_monitor_analysis_system.net_flow_process;
+package cn.kiko.netmonitoranalysissystemcollector.net_flow_process;
 
 import cn.kiko.switch_sdk.algo.FlowKey;
 import cn.kiko.switch_sdk.algo.FlowStatisticAlgo;

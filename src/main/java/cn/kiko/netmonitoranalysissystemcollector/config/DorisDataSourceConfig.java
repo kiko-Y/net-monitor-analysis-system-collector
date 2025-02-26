@@ -1,4 +1,4 @@
-package cn.kiko.net_monitor_analysis_system.config;
+package cn.kiko.netmonitoranalysissystemcollector.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

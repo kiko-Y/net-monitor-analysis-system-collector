@@ -1,8 +1,6 @@
-package cn.kiko.net_monitor_analysis_system.redis;
+package cn.kiko.netmonitoranalysissystemcollector.redis;
 
-import cn.kiko.net_monitor_analysis_system.runner.ServerStarter;
-import cn.kiko.switch_sdk.algo.FlowKey;
-import cn.kiko.switch_sdk.model.SwitchExportedMonitorData;
+import cn.kiko.netmonitoranalysissystemcollector.runner.ServerStarter;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

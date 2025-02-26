@@ -1,6 +1,6 @@
-package cn.kiko.net_monitor_analysis_system.doris;
+package cn.kiko.netmonitoranalysissystemcollector.doris;
 
-import cn.kiko.net_monitor_analysis_system.runner.ServerStarter;
+import cn.kiko.netmonitoranalysissystemcollector.runner.ServerStarter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

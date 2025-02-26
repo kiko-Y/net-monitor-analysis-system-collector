@@ -1,4 +1,4 @@
-package cn.kiko.net_monitor_analysis_system.collector;
+package cn.kiko.netmonitoranalysissystemcollector.collector;
 
 import cn.kiko.switch_sdk.algo.FlowKey;
 import cn.kiko.switch_sdk.model.SwitchExportedMonitorData;

@@ -1,4 +1,4 @@
-package cn.kiko.net_monitor_analysis_system.data;
+package cn.kiko.netmonitoranalysissystemcollector.data;
 
 import org.junit.jupiter.api.Test;
 
