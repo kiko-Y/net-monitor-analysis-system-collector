@@ -9,9 +9,9 @@ services:
       v-network:
         ipv4_address: 192.168.2.1
     environment:
-      - SERVER_IP=162.105.146.22
-      - SERVICE_IP=10.7.234.150
-      - SERVICE_PORT=9401
+      - SERVER_IP=162.105.146.22    # 各个其他服务的 host ip 地址, redis 以及 doris 等
+      - SERVICE_IP=10.7.234.150     # 本机地址用于服务注册，如果外部要访问需要公有 ip
+      - SERVICE_PORT=9401           # 本机端口用于服务注册
     deploy:
       resources:
         limits:
@@ -27,9 +27,9 @@ services:
       v-network:
         ipv4_address: 192.168.2.2
     environment:
-      - SERVER_IP=162.105.146.22
-      - SERVICE_IP=10.7.234.150
-      - SERVICE_PORT=9402
+      - SERVER_IP=162.105.146.22    # 各个其他服务的 host ip 地址, redis 以及 doris 等
+      - SERVICE_IP=10.7.234.150     # 本机地址用于服务注册，如果外部要访问需要公有 ip
+      - SERVICE_PORT=9402           # 本机端口用于服务注册
     deploy:
       resources:
         limits:
@@ -45,9 +45,9 @@ services:
       v-network:
         ipv4_address: 192.168.2.3
     environment:
-      - SERVER_IP=162.105.146.22
-      - SERVICE_IP=10.7.234.150
-      - SERVICE_PORT=9403
+      - SERVER_IP=162.105.146.22    # 各个其他服务的 host ip 地址, redis 以及 doris 等
+      - SERVICE_IP=10.7.234.150     # 本机地址用于服务注册，如果外部要访问需要公有 ip
+      - SERVICE_PORT=9403           # 本机端口用于服务注册
     deploy:
       resources:
         limits:
