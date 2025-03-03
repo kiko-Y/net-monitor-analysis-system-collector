@@ -2,7 +2,7 @@ package cn.kiko.netmonitoranalysissystemcollector.runner;
 
 import cn.kiko.netmonitoranalysissystemcollector.collector.MonitorDataCollector;
 import cn.kiko.netmonitoranalysissystemcollector.config.NacosServerDiscoveryConfig;
-import cn.kiko.switch_sdk.algo.FlowKey2Tuple;
+import cn.kiko.switch_sdk.algo.IFlowKey;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
@@ -12,13 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
 
-@Component
-public class ServerStarter implements CommandLineRunner {
+public class ServerStarter<Key extends IFlowKey> implements CommandLineRunner {
 
     @Autowired
-    private MonitorDataCollector<FlowKey2Tuple> monitorDataCollector;
+    private MonitorDataCollector<Key> monitorDataCollector;
 
     @Autowired
     private NacosServerDiscoveryConfig nacosServerDiscoveryConfig;
