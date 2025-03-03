@@ -1,6 +1,6 @@
 package cn.kiko.netmonitoranalysissystemcollector.collector;
 
-import cn.kiko.switch_sdk.algo.FlowKey;
+import cn.kiko.switch_sdk.algo.IFlowKey;
 import cn.kiko.switch_sdk.model.SwitchExportedMonitorData;
 import com.alibaba.nacos.api.config.annotation.NacosValue;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,7 +14,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
-import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -28,8 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.*;
 
-@Component
-public class MonitorDataCollector {
+public class MonitorDataCollector<Key extends IFlowKey> {
     // 监听端口
     @Value("${collector.port}")
     private int port;
@@ -59,16 +57,21 @@ public class MonitorDataCollector {
     @Value("${kafka-test.topic}")
     private String topic;
 
-    public MonitorDataCollector() {
+    private Class<Key> keyClass;
+
+    public MonitorDataCollector(Class<Key> keyClass) {
+        this.keyClass = keyClass;
         pool = new ThreadPoolExecutor(4, 4, 0L,
                 TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ThreadPoolExecutor.CallerRunsPolicy());
     }
 
     public void handleClient(SelectionKey key) {
+        logger.info("client connected...");
         SocketChannel clientSocketChannel = (SocketChannel)key.channel();
         // 新起了线程来处理，要先把 interested events 设为空
         key.interestOps(0);
         pool.submit(() -> {
+            logger.info("start receiving data from client...");
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             ByteBuffer buffer = ByteBuffer.allocate(1024 * 1024);
             while (true) {
@@ -82,7 +85,7 @@ public class MonitorDataCollector {
                 buffer.clear();
             }
             key.interestOps(SelectionKey.OP_READ);
-            SwitchExportedMonitorData<FlowKey> monitorData = SwitchExportedMonitorData.parseFromBytes(os.toByteArray(), FlowKey.class);
+            SwitchExportedMonitorData<Key> monitorData = SwitchExportedMonitorData.parseFromBytes(os.toByteArray(), keyClass);
             logger.info("received data : {}, size: {}, at timestamp: {}", monitorData.hashCode(), os.size(), System.currentTimeMillis());
 //            dataInsertToDoris(monitorData);
             dataInsertToRedis(monitorData);
@@ -90,7 +93,7 @@ public class MonitorDataCollector {
         });
     }
 
-    private void checkAndSendToKafka(SwitchExportedMonitorData<FlowKey> monitorData) {
+    private void checkAndSendToKafka(SwitchExportedMonitorData<Key> monitorData) {
         String redisKey = generateRedisKeyForRealtimeCounter(monitorData.getTimeStamp());
         Long receivedCountForCurrentTimestamp = redisTemplate.opsForValue().increment(redisKey);
         redisTemplate.expire(redisKey, 3 * switchTimeIntervalSec, TimeUnit.SECONDS);
@@ -109,15 +112,15 @@ public class MonitorDataCollector {
         }
     }
 
-    private void dataInsertToRedis(SwitchExportedMonitorData<FlowKey> monitorData) {
+    private void dataInsertToRedis(SwitchExportedMonitorData<Key> monitorData) {
         String redisKey = generateRedisKeyForRealtimeDataCacheHash(monitorData.getTimeStamp());
         logger.info("generate key: {}", redisKey);
-        bytesRedisTemplate.opsForHash().put(redisKey, monitorData.getSwitchID(), monitorData.toBytes(FlowKey.class));
+        bytesRedisTemplate.opsForHash().put(redisKey, monitorData.getSwitchID(), monitorData.toBytes(keyClass));
         bytesRedisTemplate.expire(redisKey, 3 * switchTimeIntervalSec, TimeUnit.SECONDS);
         logger.info("data cached to redis, key: {}, hashKey: {}, expire time: {}s", redisKey, monitorData.getSwitchID(), 3*switchTimeIntervalSec);
     }
 
-    private void dataInsertToDoris(SwitchExportedMonitorData<FlowKey> monitorData) {
+    private void dataInsertToDoris(SwitchExportedMonitorData<Key> monitorData) {
         // 数据上送 doris
         ObjectMapper objectMapper = new ObjectMapper();
         String sql;

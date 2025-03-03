@@ -2,6 +2,7 @@ package cn.kiko.netmonitoranalysissystemcollector.runner;
 
 import cn.kiko.netmonitoranalysissystemcollector.collector.MonitorDataCollector;
 import cn.kiko.netmonitoranalysissystemcollector.config.NacosServerDiscoveryConfig;
+import cn.kiko.switch_sdk.algo.FlowKey2Tuple;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
@@ -15,16 +16,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ServerStarter implements CommandLineRunner {
-    private final MonitorDataCollector collector;
-    private final NacosServerDiscoveryConfig nacosServerDiscoveryConfig;
+
+    @Autowired
+    private MonitorDataCollector<FlowKey2Tuple> monitorDataCollector;
+
+    @Autowired
+    private NacosServerDiscoveryConfig nacosServerDiscoveryConfig;
 
     private static final Logger logger = LoggerFactory.getLogger(ServerStarter.class);
-    @Autowired
-    public ServerStarter(MonitorDataCollector collector, NacosServerDiscoveryConfig nacosServerDiscoveryConfig) {
-        this.collector = collector;
-        this.nacosServerDiscoveryConfig = nacosServerDiscoveryConfig;
-    }
-
 
     @PostConstruct
     public void serverRegister() {
@@ -64,6 +63,6 @@ public class ServerStarter implements CommandLineRunner {
     }
     @Override
     public void run(String... args) {
-        collector.startCollectorServer();
+        monitorDataCollector.startCollectorServer();
     }
 }
