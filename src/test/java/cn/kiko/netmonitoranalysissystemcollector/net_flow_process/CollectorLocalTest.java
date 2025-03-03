@@ -1,6 +1,7 @@
 package cn.kiko.netmonitoranalysissystemcollector.net_flow_process;
 
 import cn.kiko.netmonitoranalysissystemcollector.collector.MonitorDataCollector;
+import cn.kiko.switch_sdk.algo.FlowKey5Tuple;
 import cn.kiko.switch_sdk.data.PacketReader;
 import cn.kiko.switch_sdk.device.Packet;
 import cn.kiko.switch_sdk.device.Switch;
@@ -31,7 +32,7 @@ public class CollectorLocalTest {
 
         PacketReader packetReader = new PacketReader();
         List<Packet> packets = packetReader.readNPacket(100000);
-        Switch switchX = new Switch(ip, port, 1, 3, 100, 8, 2 * 1024 * 1024);
+        Switch<FlowKey5Tuple> switchX = new Switch<>(ip, port, 1, 3, 100, 8, 2 * 1024 * 1024, FlowKey5Tuple.class);
         new Thread(() -> {
             for (var packet: packets) {
                 switchX.receivePacket(packet);

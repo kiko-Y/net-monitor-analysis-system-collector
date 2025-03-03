@@ -1,6 +1,7 @@
 package cn.kiko.netmonitoranalysissystemcollector.net_flow_process;
 
 import cn.kiko.switch_sdk.algo.FlowKey;
+import cn.kiko.switch_sdk.algo.FlowKey5Tuple;
 import cn.kiko.switch_sdk.algo.FlowStatisticAlgo;
 import cn.kiko.switch_sdk.data.PacketReader;
 import cn.kiko.switch_sdk.device.Packet;
@@ -17,13 +18,13 @@ public class NetFlowAlgoTest {
     public void netFlowProcessTest() {
         PacketReader packetReader = new PacketReader();
         List<Packet> packets = packetReader.readNPacket(100000);
-        Switch switchX = new Switch("localhost", 9400, 100, 3, 100, 8, 2 * 1024 * 1024);
+        Switch<FlowKey5Tuple> switchX = new Switch<>("localhost", 9400, 100, 3, 100, 8, 2 * 1024 * 1024, FlowKey5Tuple.class);
         HashMap<Packet, Integer> map = new HashMap<>();
         for (Packet packet: packets) {
             switchX.receivePacket(packet);
             map.merge(packet, 1, Integer::sum);
         }
-        FlowStatisticAlgo<FlowKey> flowStatisticAlgo = switchX.getFlowStatisticAlgo();
+        FlowStatisticAlgo<FlowKey5Tuple> flowStatisticAlgo = switchX.getFlowStatisticAlgo();
         flowStatisticAlgo.clearCache();
         System.out.println(map.size());
         List<Packet> list = map.keySet().stream().filter(x -> map.get(x) > 100)
@@ -32,7 +33,7 @@ public class NetFlowAlgoTest {
         System.out.println(list.size());
         for (var packet: list) {
             int realCount = map.get(packet);
-            int estimatedCount = flowStatisticAlgo.getCmCount().query(Switch.packetToFlowKey(packet));
+            int estimatedCount = flowStatisticAlgo.getCmCount().query(FlowKey5Tuple.fromPacket(packet));
             System.out.print("Real Value: " + realCount + ", Estimate Value: " + estimatedCount);
             System.out.println(realCount == estimatedCount ? "" : " *");
         }
@@ -47,10 +48,10 @@ public class NetFlowAlgoTest {
         PacketReader packetReader = new PacketReader();
         List<Packet> packets = packetReader.readNPacket(mergeCount * packetsPerTimeWindow);
         HashMap<Packet, Integer> realCounter = new HashMap<>();
-        Switch singleSwitch = new Switch("localhost", 9400, 100, 3, 100, 8, sketchMemoryInBytes);
-        Switch[] switches = new Switch[mergeCount];
+        Switch<FlowKey5Tuple> singleSwitch = new Switch<>("localhost", 9400, 100, 3, 100, 8, sketchMemoryInBytes, FlowKey5Tuple.class);
+        Switch<FlowKey5Tuple>[] switches = new Switch[mergeCount];
         for (int i = 0; i < mergeCount; i++) {
-            switches[i] = new Switch("localhost", 9400, 100, 3, 100, 8, sketchMemoryInBytes);
+            switches[i] = new Switch<>("localhost", 9400, 100, 3, 100, 8, sketchMemoryInBytes, FlowKey5Tuple.class);
         }
         for (int i = 0; i < mergeCount * packetsPerTimeWindow; i++) {
             Packet packet = packets.get(i);
@@ -62,17 +63,17 @@ public class NetFlowAlgoTest {
                 .sorted(Comparator.comparingInt(kk -> -realCounter.get(kk)))
                 .limit(k)
                 .toList();
-        FlowStatisticAlgo<FlowKey> singleSAlgo = singleSwitch.getFlowStatisticAlgo();
-        List<FlowStatisticAlgo<FlowKey>> algos = Arrays.stream(switches).map(Switch::getFlowStatisticAlgo).toList();
+        FlowStatisticAlgo<FlowKey5Tuple> singleSAlgo = singleSwitch.getFlowStatisticAlgo();
+        List<FlowStatisticAlgo<FlowKey5Tuple>> algos = Arrays.stream(switches).map(Switch::getFlowStatisticAlgo).toList();
         singleSAlgo.clearCache();
         algos.forEach(FlowStatisticAlgo::clearCache);
 
         for (int i = 0; i < k; ++i) {
             Packet packet = topK.get(i);
-            int estimatedValueMerge = singleSAlgo.getCmCount().query(Switch.packetToFlowKey(packet));
+            int estimatedValueMerge = singleSAlgo.getCmCount().query(FlowKey5Tuple.fromPacket(packet));
             int estimatedValueNoMerge = 0;
             for (int j = 0; j < mergeCount; j++) {
-                estimatedValueNoMerge += algos.get(j).getCmCount().query(Switch.packetToFlowKey(packet));
+                estimatedValueNoMerge += algos.get(j).getCmCount().query(FlowKey5Tuple.fromPacket(packet));
             }
             int realValue = realCounter.get(packet);
             System.out.println("RealValue: " +  realValue+

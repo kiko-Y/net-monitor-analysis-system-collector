@@ -1,6 +1,7 @@
 package cn.kiko.netmonitoranalysissystemcollector.doris;
 
 import cn.kiko.netmonitoranalysissystemcollector.collector.MonitorDataCollector;
+import cn.kiko.switch_sdk.algo.FlowKey5Tuple;
 import cn.kiko.switch_sdk.data.PacketReader;
 import cn.kiko.switch_sdk.device.Packet;
 import cn.kiko.switch_sdk.device.Switch;
@@ -38,7 +39,7 @@ public class TestDataGenerator {
         new Thread(() -> {
             PacketReader packetReader = new PacketReader();
             List<Packet> packets = packetReader.readNPacket(100000);
-            Switch switchX = new Switch("localhost", port, 1, 3, 100, 8, 1024);
+            Switch<FlowKey5Tuple> switchX = new Switch<>("localhost", port, 1, 3, 100, 8, 1024, FlowKey5Tuple.class);
             new Thread(() -> {
                 for (int i = 0; i < packets.size(); i++) {
                     Packet packet = packets.get(i);
