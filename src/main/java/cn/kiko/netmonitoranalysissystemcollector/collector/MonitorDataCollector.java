@@ -54,7 +54,7 @@ public class MonitorDataCollector<Key extends IFlowKey> {
     private RedisTemplate<String,byte[]> bytesRedisTemplate;
 
 //    @Value("${collector.kafka.topic}")
-    @Value("${kafka-test.topic}")
+    @Value("${kafka-topic.collect-complete}")
     private String topic;
 
     private Class<Key> keyClass;
@@ -113,11 +113,13 @@ public class MonitorDataCollector<Key extends IFlowKey> {
     }
 
     private void dataInsertToRedis(SwitchExportedMonitorData<Key> monitorData) {
+        long startTime = System.currentTimeMillis();
         String redisKey = generateRedisKeyForRealtimeDataCacheHash(monitorData.getTimeStamp());
         logger.info("generate key: {}", redisKey);
         bytesRedisTemplate.opsForHash().put(redisKey, monitorData.getSwitchID(), monitorData.toBytes(keyClass));
         bytesRedisTemplate.expire(redisKey, 3 * switchTimeIntervalSec, TimeUnit.SECONDS);
-        logger.info("data cached to redis, key: {}, hashKey: {}, expire time: {}s", redisKey, monitorData.getSwitchID(), 3*switchTimeIntervalSec);
+        logger.info("data cached to redis, key: {}, hashKey: {}, expire time: {}s, cost time {}ms",
+                redisKey, monitorData.getSwitchID(), 3*switchTimeIntervalSec, System.currentTimeMillis() - startTime);
     }
 
     private void dataInsertToDoris(SwitchExportedMonitorData<Key> monitorData) {

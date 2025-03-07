@@ -41,6 +41,9 @@ collector:
 kafka-test:
   topic: test-topic
 
+kafka-topic:
+  collect-complete: collect-complete
+
 nacos:
   discovery:
     server-addr: ${SERVER_IP:162.105.146.22}:8848
